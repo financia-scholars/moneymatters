@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3 {
+      color: #333;
+    }
+
+    #game-container {
+      margin: 20px auto;
+      max-width: 600px;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #items-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .item {
+      margin: 20px;
+      text-align: center;
+    }
+
+    .item-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .price {
+      display: block;
+      font-weight: bold;
+      font-size: 16px;
+      color: #666;
+    }
+
+    .item button {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #summary-container {
+      margin-top: 40px;
+      border-top: 2px solid #333;
+      padding-top: 20px;
+      display: none;
+    }
+
+    #purchased-items, #not-purchased-items {
+      margin-top: 20px;
+      list-style: none;
+      padding: 0;
+    }
+
+    #purchased-items li, #not-purchased-items li {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    #score {
+      font-size: 24px;
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="font-size: 32px; color: #333;">Money Matters</h1>
+  <div id="game-container">
+    <h2 style="font-size: 24px; color: #333;">Your Balance: $<span id="balance">100</span></h2>
+    <div id="items-container">
+      <div class="item">
+        <span class="item-name">Food</span>
+        <span class="price">$20</span>
+        <button onclick="buyItem('food', 20)">Buy</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Water</span>
+        <span class="price">$20</span>
+        <button onclick="buyItem('water', 20)">Buy</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Bike</span>
+        <span class="price">$20</span>
+        <button onclick="buyItem('bike', 20)">Buy</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Legos</span>
+        <span class="price">$20</span>
+        <button onclick="buyItem('legos', 20)">Buy</button>
+      </div>
+      <div class="item">
+        <span class="item-name">iPad</span>
+        <span class="price">$20</span>
+        <button onclick="buyItem('ipad', 20)">Buy</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Pencils</span>
+        <span class="price">$20</span>
+        <button onclick="buyItem('pencils', 20)">Buy</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Clothes</span>
+        <span class="price">$40</span>
+        <button onclick="buyItem('clothes', 40)">Buy</button>
+      </div>
+      <!-- Add more items with different names -->
+    </div>
+    <div id="summary-container">
+      <h3 style="font-size: 24px; color: #333;">Summary</h3>
+      <div id="purchased-items"></div>
+      <div id="not-purchased-items"></div>
+      <h3 style="font-size: 24px; color: #333;">Final Score: <span id="score"></span></h3>
+    </div>
+  </div>
+
+  <script>
+    // Store the available items with their prices
+    const items = [
+      { name: 'food', price: 20 },
+      { name: 'water', price: 20 },
+      { name: 'bike', price: 20 },
+      { name: 'legos', price: 20 },
+      { name: 'ipad', price: 20 },
+      { name: 'pencils', price: 20 },
+      { name: 'clothes', price: 40 }
+      // Add more items with different names and prices
+    ];
+
+    // Store the purchased and not purchased items
+    let purchasedItems = [];
+    let notPurchasedItems = [];
+
+    // Initialize the balance
+    let balance = 100;
+    document.getElementById('balance').textContent = balance;
+
+    // Function to buy an item
+    function buyItem(itemName, itemPrice) {
+      if (balance >= itemPrice) {
+        balance -= itemPrice;
+        document.getElementById('balance').textContent = balance;
+        purchasedItems.push(itemName);
+      } else {
+        notPurchasedItems.push(itemName);
+      }
+
+      // Check if the player has spent all their money
+      if (balance === 0) {
+        endGame();
+      }
+    }
+
+    // Function to end the game and display the summary
+    function endGame() {
+      document.getElementById('items-container').style.display = 'none';
+      document.getElementById('summary-container').style.display = 'block';
+      calculateScore();
+      displaySummary();
+    }
+
+    // Function to calculate and display the final score
+    function calculateScore() {
+      let needsBought = 0;
+      for (const item of purchasedItems) {
+        // Increment the needsBought count if the item is a need
+        // You can customize this condition based on your specific needs and wants criteria
+        if (item === 'food' || item === 'water' || item === 'clothes') {
+          needsBought++;
+        }
+      }
+
+      let score;
+      if (needsBought === 0) {
+        score = 'F';
+      } else if (needsBought === 3) {
+        score = 'A';
+      } else if (needsBought === 2) {
+        score = 'B';
+      } else if (needsBought === 1) {
+        score = 'C';
+      }
+
+      document.getElementById('score').textContent = score;
+    }
+
+    // Function to display the purchased and not purchased items
+    function displaySummary() {
+      const purchasedItemsContainer = document.getElementById('purchased-items');
+      const notPurchasedItemsContainer = document.getElementById('not-purchased-items');
+
+      for (const item of purchasedItems) {
+        const listItem = document.createElement('li');
+        listItem.textContent = item;
+        purchasedItemsContainer.appendChild(listItem);
+      }
+
+      for (const item of notPurchasedItems) {
+        const listItem = document.createElement('li');
+        listItem.textContent = item;
+        notPurchasedItemsContainer.appendChild(listItem);
+      }
+    }
+  </script>
+</body>
+</html>
